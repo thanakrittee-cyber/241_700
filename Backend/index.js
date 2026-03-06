@@ -3,6 +3,9 @@ const mysql = require('mysql2/promise');
 const bodyParser = require('body-parser');
 const app = express();
 const port = 8000;
+const cors = require('cors');
+
+app.use(cors());
 
 app.use(bodyParser.json());
 
@@ -43,7 +46,7 @@ app.get('/users/:id', async (req, res) => {
     try {
         let id = req.params.id;
         const results = await conn.query('SELECT * FROM users WHERE id = ?', id);
-        if(results[0].lenght == 0){
+        if(results[0].length == 0){
             throw{statusCode:404,message:'User not found'};
         }
         res.json(results[0][0]);
@@ -111,4 +114,8 @@ app.patch('/user/:id', (req, res) => {
             indexUpdate: selectedIndex
         }
     });
+});
+app.listen(port, async () => {
+    await initMySQL();
+    console.log(`Server running on http://localhost:${port}`);
 });
